@@ -1,0 +1,9 @@
+{
+    "server_url": "xxxx.xxxx.xxxxx",
+    "access_token": "xxxxxxxxxxxxxxxxxxxxxx",
+    "username": "@chatgpt",
+    "openai_api_key": "sk-xxxxxxxxxxxxxxxxxxx",
+    "bing_api_endpoint": "http://api:3000/conversation",
+    "bard_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+    "bing_auth_cookie": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}

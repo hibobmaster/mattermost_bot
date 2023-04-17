@@ -1,0 +1,23 @@
+services:
+  app:
+    image: ghcr.io/hibobmaster/mattermost_bot:latest
+    container_name: mattermost_bot
+    restart: always
+    env_file:
+      - .env
+    # volumes:
+      # use env file or config.json
+      # - ./config.json:/app/config.json
+    networks:
+      - mattermost_network
+
+  # api:
+  #   image: hibobmaster/node-chatgpt-api:latest
+  #   container_name: node-chatgpt-api
+  #   volumes:
+  #     - ./settings.js:/var/chatgpt-api/settings.js
+  #   networks:
+  #     - mattermost_network
+  
+networks:
+  mattermost_network:
