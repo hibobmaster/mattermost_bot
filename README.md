@@ -22,3 +22,8 @@ docker compose up -d
 ![demo1](https://i.imgur.com/XRAQB4B.jpg)
 ![demo2](https://i.imgur.com/if72kyH.jpg)
 ![demo3](https://i.imgur.com/GHczfkv.jpg)
+
+## Thanks
+<a href="https://jb.gg/OpenSourceSupport" target="_blank">
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="200" height="200">
+</a>
