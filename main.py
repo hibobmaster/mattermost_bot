@@ -20,6 +20,8 @@ async def main():
             bing_api_endpoint=config.get("bing_api_endpoint"),
             bard_token=config.get("bard_token"),
             bing_auth_cookie=config.get("bing_auth_cookie"),
+            pandora_api_endpoint=config.get("pandora_api_endpoint"),
+            pandora_api_model=config.get("pandora_api_model"),
             port=config.get("port"),
             timeout=config.get("timeout"),
         )
@@ -36,6 +38,8 @@ async def main():
             bing_api_endpoint=os.environ.get("BING_API_ENDPOINT"),
             bard_token=os.environ.get("BARD_TOKEN"),
             bing_auth_cookie=os.environ.get("BING_AUTH_COOKIE"),
+            pandora_api_endpoint=os.environ.get("PANDORA_API_ENDPOINT"),
+            pandora_api_model=os.environ.get("PANDORA_API_MODEL"),
             port=os.environ.get("PORT"),
             timeout=os.environ.get("TIMEOUT"),
         )

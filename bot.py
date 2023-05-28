@@ -11,6 +11,8 @@ from bing import BingBot
 from bard import Bardbot
 from BingImageGen import ImageGenAsync
 from log import getlogger
+from pandora import Pandora
+import uuid
 
 logger = getlogger()
 
@@ -26,6 +28,8 @@ class Bot:
         openai_api_key: Optional[str] = None,
         openai_api_endpoint: Optional[str] = None,
         bing_api_endpoint: Optional[str] = None,
+        pandora_api_endpoint: Optional[str] = None,
+        pandora_api_model: Optional[str] = None,
         bard_token: Optional[str] = None,
         bing_auth_cookie: Optional[str] = None,
         port: int = 443,
@@ -112,6 +116,18 @@ class Bot:
                 "bing_api_endpoint is not provided, !bing command will not work"
             )
 
+        # initialize pandora
+        if pandora_api_endpoint is not None:
+            self.pandora_api_endpoint = pandora_api_endpoint
+            self.pandora = Pandora(
+                api_endpoint=pandora_api_endpoint
+            )
+            self.pandora_init()
+            if pandora_api_model is None:
+                self.pandora_api_model = "text-davinci-002-render-sha-mobile"
+            else:
+                self.pandora_api_model = pandora_api_model
+
         self.bard_token = bard_token
         # initialize bard
         if self.bard_token is not None:
@@ -128,23 +144,34 @@ class Bot:
                 "bing_auth_cookie is not provided, !pic command will not work"
             )
 
-        # regular expression to match keyword [!gpt {prompt}] [!chat {prompt}] [!bing {prompt}] [!pic {prompt}] [!bard {prompt}]
+        # regular expression to match keyword 
         self.gpt_prog = re.compile(r"^\s*!gpt\s*(.+)$")
         self.chat_prog = re.compile(r"^\s*!chat\s*(.+)$")
         self.bing_prog = re.compile(r"^\s*!bing\s*(.+)$")
         self.bard_prog = re.compile(r"^\s*!bard\s*(.+)$")
         self.pic_prog = re.compile(r"^\s*!pic\s*(.+)$")
         self.help_prog = re.compile(r"^\s*!help\s*.*$")
+        self.talk_prog = re.compile(r"^\s*!talk\s*(.+)$")
+        self.goon_prog = re.compile(r"^\s*!goon\s*.*$")
+        self.new_prog = re.compile(r"^\s*!new\s*.*$")
 
     # close session
     def __del__(self) -> None:
         self.driver.disconnect()
+
+    async def __aenter__(self):
+        return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.session.close()
 
     def login(self) -> None:
         self.driver.login()
+
+    def pandora_init(self) -> None:
+        self.conversation_id = None
+        self.parent_message_id = str(uuid.uuid4())
+        self.first_time = True
 
     async def run(self) -> None:
         await self.driver.init_websocket(self.websocket_handler)
@@ -162,6 +189,7 @@ class Bot:
                 channel_id = raw_data_dict["channel_id"]
                 sender_name = response["data"]["sender_name"]
                 raw_message = raw_data_dict["message"]
+                
                 try:
                     asyncio.create_task(
                         self.message_callback(
@@ -217,6 +245,69 @@ class Bot:
                         logger.error(e, exc_info=True)
                         raise Exception(e)
 
+            if self.pandora_api_endpoint is not None:
+                # !talk command trigger handler
+                if self.talk_prog.match(message):
+                    prompt = self.talk_prog.match(message).group(1)
+                    try:
+                        if self.conversation_id is not None:
+                            data = {
+                                "prompt": prompt,
+                                "model": self.pandora_api_model,
+                                "parent_message_id": self.parent_message_id,
+                                "conversation_id": self.conversation_id,
+                                "stream": False,
+                            }
+                        else:
+                            data = {
+                                "prompt": prompt,
+                                "model": self.pandora_api_model,
+                                "parent_message_id": self.parent_message_id,
+                                "stream": False,
+                            }
+                        response = await self.pandora.talk(data)
+                        self.conversation_id = response['conversation_id']
+                        self.parent_message_id = response['message']['id']
+                        content = response['message']['content']['parts'][0]
+                        if self.first_time:
+                            self.first_time = False
+                            data = {
+                                "model": self.pandora_api_model,
+                                "message_id": self.parent_message_id,
+                            }
+                            await self.pandora.gen_title(data, self.conversation_id)
+                        
+                        await asyncio.to_thread(
+                            self.send_message, channel_id, f"{content}"
+                        )
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
+                        raise Exception(e)
+                    
+                # !goon command trigger handler
+                if self.goon_prog.match(message) and self.conversation_id is not None:
+                    try:
+                        data = {
+                            "model": self.pandora_api_model,
+                            "parent_message_id": self.parent_message_id,
+                            "conversation_id": self.conversation_id,
+                            "stream": False,
+                        }
+                        response = await self.pandora.goon(data)
+                        self.conversation_id = response['conversation_id']
+                        self.parent_message_id = response['message']['id']
+                        content = response['message']['content']['parts'][0]
+                        await asyncio.to_thread(
+                            self.send_message, channel_id, f"{content}"
+                        )
+                    except Exception as e:
+                        logger.error(e, exc_info=True)
+                        raise Exception(e)
+
+                # !new command trigger handler
+                if self.new_prog.match(message):
+                    self.pandora_init()
+
             if self.bard_token is not None:
                 # !bard command trigger handler
                 if self.bard_prog.match(message):
@@ -265,7 +356,7 @@ class Bot:
         self.driver.posts.create_post(
             options={
                 "channel_id": channel_id,
-                "message": message,
+                "message": message
             }
         )
 
@@ -321,6 +412,9 @@ class Bot:
             + "!bing [content], chat with context conversation powered by Bing AI\n"
             + "!bard [content], chat with Google's Bard\n"
             + "!pic [prompt], Image generation by Microsoft Bing\n"
+            + "!talk [content], talk using chatgpt web\n"
+            + "!goon, continue the incomplete conversation\n"
+            + "!new, start a new conversation\n"
             + "!help, help message"
         )
         return help_info
