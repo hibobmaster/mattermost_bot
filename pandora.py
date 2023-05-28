@@ -60,7 +60,8 @@ class Pandora:
 async def test():
     model = "text-davinci-002-render-sha-mobile"
     api_endpoint = "http://127.0.0.1:8008"
-    client = Pandora(api_endpoint)
+    async with aiohttp.ClientSession() as session:
+        client = Pandora(api_endpoint, session)
     conversation_id = None
     parent_message_id = str(uuid.uuid4())
     first_time = True
