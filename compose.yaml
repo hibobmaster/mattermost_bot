@@ -2,7 +2,7 @@ services:
   app:
     image: ghcr.io/hibobmaster/mattermost_bot:latest
     container_name: mattermost_bot
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
     # volumes:
@@ -18,6 +18,16 @@ services:
   #     - ./settings.js:/var/chatgpt-api/settings.js
   #   networks:
   #     - mattermost_network
-  
+
+  # pandora:
+  #   image: pengzhile/pandora
+  #   container_name: pandora
+  #   restart: unless-stopped
+  #   environment:
+  #     - PANDORA_ACCESS_TOKEN="xxxxxxxxxxxxxx"
+  #     - PANDORA_SERVER="0.0.0.0:8008"
+  #   networks:
+  #     - mattermost_network
+
 networks:
   mattermost_network:

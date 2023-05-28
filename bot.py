@@ -120,9 +120,9 @@ class Bot:
         if pandora_api_endpoint is not None:
             self.pandora_api_endpoint = pandora_api_endpoint
             self.pandora = Pandora(
-                api_endpoint=pandora_api_endpoint
+                api_endpoint=pandora_api_endpoint,
+                clientSession=self.session
             )
-            self.pandora_init()
             if pandora_api_model is None:
                 self.pandora_api_model = "text-davinci-002-render-sha-mobile"
             else:
@@ -155,24 +155,22 @@ class Bot:
         self.goon_prog = re.compile(r"^\s*!goon\s*.*$")
         self.new_prog = re.compile(r"^\s*!new\s*.*$")
 
+        self.pandora_data = {}
+
     # close session
     def __del__(self) -> None:
         self.driver.disconnect()
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.session.close()
-
     def login(self) -> None:
         self.driver.login()
 
-    def pandora_init(self) -> None:
-        self.conversation_id = None
-        self.parent_message_id = str(uuid.uuid4())
-        self.first_time = True
-
+    def pandora_init(self, user_id: str) -> None:
+        self.pandora_data[user_id] = {
+            "conversation_id": None,
+            "parent_message_id": str(uuid.uuid4()),
+            "first_time": True
+        }
+        
     async def run(self) -> None:
         await self.driver.init_websocket(self.websocket_handler)
 
@@ -190,6 +188,9 @@ class Bot:
                 sender_name = response["data"]["sender_name"]
                 raw_message = raw_data_dict["message"]
                 
+                if user_id not in self.pandora_data:
+                    self.pandora_init(user_id)
+
                 try:
                     asyncio.create_task(
                         self.message_callback(
@@ -250,32 +251,32 @@ class Bot:
                 if self.talk_prog.match(message):
                     prompt = self.talk_prog.match(message).group(1)
                     try:
-                        if self.conversation_id is not None:
+                        if self.pandora_data[user_id]["conversation_id"] is not None:
                             data = {
                                 "prompt": prompt,
                                 "model": self.pandora_api_model,
-                                "parent_message_id": self.parent_message_id,
-                                "conversation_id": self.conversation_id,
+                                "parent_message_id": self.pandora_data[user_id]["parent_message_id"],
+                                "conversation_id": self.pandora_data[user_id]["conversation_id"],
                                 "stream": False,
                             }
                         else:
                             data = {
                                 "prompt": prompt,
                                 "model": self.pandora_api_model,
-                                "parent_message_id": self.parent_message_id,
+                                "parent_message_id": self.pandora_data[user_id]["parent_message_id"],
                                 "stream": False,
                             }
                         response = await self.pandora.talk(data)
-                        self.conversation_id = response['conversation_id']
-                        self.parent_message_id = response['message']['id']
+                        self.pandora_data[user_id]["conversation_id"] = response['conversation_id']
+                        self.pandora_data[user_id]["parent_message_id"] = response['message']['id']
                         content = response['message']['content']['parts'][0]
-                        if self.first_time:
-                            self.first_time = False
+                        if self.pandora_data[user_id]["first_time"]:
+                            self.pandora_data[user_id]["first_time"] = False
                             data = {
                                 "model": self.pandora_api_model,
-                                "message_id": self.parent_message_id,
+                                "message_id": self.pandora_data[user_id]["parent_message_id"],
                             }
-                            await self.pandora.gen_title(data, self.conversation_id)
+                            await self.pandora.gen_title(data, self.pandora_data[user_id]["conversation_id"])
                         
                         await asyncio.to_thread(
                             self.send_message, channel_id, f"{content}"
@@ -285,17 +286,17 @@ class Bot:
                         raise Exception(e)
                     
                 # !goon command trigger handler
-                if self.goon_prog.match(message) and self.conversation_id is not None:
+                if self.goon_prog.match(message) and self.pandora_data[user_id]["conversation_id"] is not None:
                     try:
                         data = {
                             "model": self.pandora_api_model,
-                            "parent_message_id": self.parent_message_id,
-                            "conversation_id": self.conversation_id,
+                            "parent_message_id": self.pandora_data[user_id]["parent_message_id"],
+                            "conversation_id": self.pandora_data[user_id]["conversation_id"],
                             "stream": False,
                         }
                         response = await self.pandora.goon(data)
-                        self.conversation_id = response['conversation_id']
-                        self.parent_message_id = response['message']['id']
+                        self.pandora_data[user_id]["conversation_id"] = response['conversation_id']
+                        self.pandora_data[user_id]["parent_message_id"] = response['message']['id']
                         content = response['message']['content']['parts'][0]
                         await asyncio.to_thread(
                             self.send_message, channel_id, f"{content}"
@@ -306,7 +307,13 @@ class Bot:
 
                 # !new command trigger handler
                 if self.new_prog.match(message):
-                    self.pandora_init()
+                    self.pandora_init(user_id)
+                    try:
+                        await asyncio.to_thread(
+                            self.send_message, channel_id, "New conversation created, please use !talk to start chatting!"
+                        )
+                    except Exception:
+                        pass
 
             if self.bard_token is not None:
                 # !bard command trigger handler

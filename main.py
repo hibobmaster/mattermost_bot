@@ -3,7 +3,6 @@ import json
 import os
 import asyncio
 
-
 async def main():
     if os.path.exists("config.json"):
         fp = open("config.json", "r", encoding="utf-8")
@@ -51,3 +50,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+

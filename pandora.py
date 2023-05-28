@@ -3,9 +3,9 @@ import uuid
 import aiohttp
 import asyncio
 class Pandora:
-    def __init__(self, api_endpoint: str) -> None:
+    def __init__(self, api_endpoint: str, clientSession: aiohttp.ClientSession) -> None:
         self.api_endpoint = api_endpoint.rstrip('/')
-        self.session = aiohttp.ClientSession()
+        self.session = clientSession
 
     async def __aenter__(self):
         return self

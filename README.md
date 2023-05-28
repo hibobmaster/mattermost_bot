@@ -6,7 +6,7 @@ This is a simple Mattermost Bot that uses OpenAI's GPT API and Bing AI and Googl
 
 1. Support Openai ChatGPT and Bing AI and Google Bard
 2. Support Bing Image Creator
-3. [pandora](https://github.com/pengzhile/pandora)
+3. [pandora](https://github.com/pengzhile/pandora) with Session isolation support
 
 ## Installation and Setup
 
