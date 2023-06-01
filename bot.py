@@ -116,9 +116,9 @@ class Bot:
                 "bing_api_endpoint is not provided, !bing command will not work"
             )
 
+        self.pandora_api_endpoint = pandora_api_endpoint
         # initialize pandora
         if pandora_api_endpoint is not None:
-            self.pandora_api_endpoint = pandora_api_endpoint
             self.pandora = Pandora(
                 api_endpoint=pandora_api_endpoint,
                 clientSession=self.session
@@ -127,7 +127,8 @@ class Bot:
                 self.pandora_api_model = "text-davinci-002-render-sha-mobile"
             else:
                 self.pandora_api_model = pandora_api_model
-
+        self.pandora_data = {}
+        
         self.bard_token = bard_token
         # initialize bard
         if self.bard_token is not None:
@@ -154,8 +155,6 @@ class Bot:
         self.talk_prog = re.compile(r"^\s*!talk\s*(.+)$")
         self.goon_prog = re.compile(r"^\s*!goon\s*.*$")
         self.new_prog = re.compile(r"^\s*!new\s*.*$")
-
-        self.pandora_data = {}
 
     # close session
     def __del__(self) -> None:
