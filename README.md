@@ -1,13 +1,11 @@
 ## Introduction
 
-This is a simple Mattermost Bot that uses OpenAI's GPT API and Bing AI and Google Bard to generate responses to user inputs. The bot responds to these commands: `!gpt`, `!chat` and `!bing` and `!pic` and `!bard` and `!talk` and `!goon` and `!new` and  `!help` depending on the first word of the prompt.
+This is a simple Mattermost Bot that uses OpenAI's GPT API to generate responses to user inputs. The bot responds to these commands: `!gpt`, `!chat` and `!talk` and `!goon` and `!new` and  `!help` depending on the first word of the prompt.
 
 ## Feature
 
-1. Support Openai ChatGPT and Bing AI and Google Bard
-2. Support Bing Image Creator
-3. [pandora](https://github.com/pengzhile/pandora) with Session isolation support
-
+1. Support Openai ChatGPT
+3. ChatGPT web ([pandora](https://github.com/pengzhile/pandora))
 ## Installation and Setup
 
 See https://github.com/hibobmaster/mattermost_bot/wiki
@@ -33,7 +31,7 @@ The following commands need pandora http api: https://github.com/pengzhile/pando
 - `!new` start a new converstaion 
 
 ## Demo
-
+Remove support for Bing AI, Google Bard due to technical problems.
 ![demo1](https://i.imgur.com/XRAQB4B.jpg)
 ![demo2](https://i.imgur.com/if72kyH.jpg)
 ![demo3](https://i.imgur.com/GHczfkv.jpg)

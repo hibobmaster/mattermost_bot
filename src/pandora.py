@@ -2,14 +2,16 @@
 import uuid
 import aiohttp
 import asyncio
+
+
 class Pandora:
     def __init__(self, api_endpoint: str, clientSession: aiohttp.ClientSession) -> None:
-        self.api_endpoint = api_endpoint.rstrip('/')
+        self.api_endpoint = api_endpoint.rstrip("/")
         self.session = clientSession
 
     async def __aenter__(self):
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.session.close()
 
@@ -23,7 +25,9 @@ class Pandora:
         :param conversation_id: str
         :return: None
         """
-        api_endpoint = self.api_endpoint + f"/api/conversation/gen_title/{conversation_id}"
+        api_endpoint = (
+            self.api_endpoint + f"/api/conversation/gen_title/{conversation_id}"
+        )
         async with self.session.post(api_endpoint, json=data) as resp:
             return await resp.json()
 
@@ -40,10 +44,10 @@ class Pandora:
         :param data: dict
         :return: None
         """
-        data['message_id'] = str(uuid.uuid4())
+        data["message_id"] = str(uuid.uuid4())
         async with self.session.post(api_endpoint, json=data) as resp:
             return await resp.json()
-        
+
     async def goon(self, data: dict) -> None:
         """
         data = {
@@ -56,7 +60,8 @@ class Pandora:
         api_endpoint = self.api_endpoint + "/api/conversation/goon"
         async with self.session.post(api_endpoint, json=data) as resp:
             return await resp.json()
-    
+
+
 async def test():
     model = "text-davinci-002-render-sha-mobile"
     api_endpoint = "http://127.0.0.1:8008"
@@ -84,9 +89,9 @@ async def test():
                     "stream": False,
                 }
             response = await client.talk(data)
-            conversation_id = response['conversation_id']
-            parent_message_id = response['message']['id']
-            content = response['message']['content']['parts'][0]
+            conversation_id = response["conversation_id"]
+            parent_message_id = response["message"]["id"]
+            content = response["message"]["content"]["parts"][0]
             print("ChatGPT: " + content + "\n")
             if first_time:
                 first_time = False
@@ -97,5 +102,5 @@ async def test():
                 response = await client.gen_title(data, conversation_id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(test())

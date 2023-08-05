@@ -136,4 +136,5 @@ dmypy.json
 .pyre/
 
 # custom
-compose-local-dev.yaml
+compose-dev.yaml
+mattermost-server

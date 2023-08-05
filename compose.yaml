@@ -11,14 +11,6 @@ services:
     networks:
       - mattermost_network
 
-  # api:
-  #   image: hibobmaster/node-chatgpt-api:latest
-  #   container_name: node-chatgpt-api
-  #   volumes:
-  #     - ./settings.js:/var/chatgpt-api/settings.js
-  #   networks:
-  #     - mattermost_network
-
   # pandora:
   #   image: pengzhile/pandora
   #   container_name: pandora
