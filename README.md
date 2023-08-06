@@ -21,8 +21,6 @@ docker compose up -d
 - `!help` help message
 - `!gpt + [prompt]` generate a one time response from chatGPT
 - `!chat + [prompt]` chat using official chatGPT api with context conversation
-- `!bing + [prompt]` chat with Bing AI with context conversation
-- `!bard + [prompt]` chat with Google's Bard
 - `!pic + [prompt]` generate an image from Bing Image Creator
 
 The following commands need pandora http api: https://github.com/pengzhile/pandora/blob/master/doc/wiki_en.md#http-restful-api
