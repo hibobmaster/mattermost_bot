@@ -4,6 +4,7 @@
 - remove pandora
 - refactor chat and image genderation backend
 - reply in thread by default
+- introduce pre-commit hooks
 
 ## v1.0.4
 

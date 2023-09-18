@@ -121,7 +121,7 @@ class Bot:
 
     # close session
     async def close(self, task: asyncio.Task) -> None:
-        await self.session.aclose()
+        await self.httpx_client.aclose()
         self.driver.disconnect()
         task.cancel()
 
@@ -206,6 +206,7 @@ class Bot:
                         channel_id,
                         "New conversation created, "
                         + "please use !chat to start chatting!",
+                        root_id,
                     )
                 except Exception as e:
                     logger.error(e, exc_info=True)
@@ -274,22 +275,12 @@ class Bot:
             logger.error(e, exc_info=True)
             raise Exception(e)
 
-    # !gpt command function
-    async def gpt(self, prompt: str) -> str:
-        return await self.askgpt.oneTimeAsk(prompt)
-
-    # !chat command function
-    async def chat(self, prompt: str) -> str:
-        return await self.gptchatbot.ask_async(prompt)
-
     # !help command function
     def help(self) -> str:
         help_info = (
             "!gpt [content], generate response without context conversation\n"
             + "!chat [content], chat with context conversation\n"
-            + "!pic [prompt], Image generation by Microsoft Bing\n"
-            + "!talk [content], talk using chatgpt web\n"
-            + "!goon, continue the incomplete conversation\n"
+            + "!pic [prompt], Image generation with DALL·E or LocalAI or stable-diffusion-webui\n"  # noqa: E501
             + "!new, start a new conversation\n"
             + "!help, help message"
         )
