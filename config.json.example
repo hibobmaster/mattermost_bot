@@ -1,10 +1,8 @@
 {
     "server_url": "xxxx.xxxx.xxxxx",
-    "access_token": "xxxxxxxxxxxxxxxxxxxxxx",
+    "email": "xxxxx",
     "username": "@chatgpt",
-    "openai_api_key": "sk-xxxxxxxxxxxxxxxxxxx",
-    "gpt_engine": "gpt-3.5-turbo",
-    "bing_auth_cookie": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "pandora_api_endpoint": "http://127.0.0.1:8008",
-    "pandora_api_model": "text-davinci-002-render-sha-mobile"
+    "password": "xxxxxxxxxxxxxxxxx",
+    "openai_api_key": "xxxxxxxxxxxxxxxxxxxxxxxxx",
+    "gpt_model": "gpt-3.5-turbo"
 }

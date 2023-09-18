@@ -1,4 +1,6 @@
-aiohttp
+aiofiles
 httpx
+Pillow
+tiktoken
+tenacity
 mattermostdriver @ git+https://github.com/hibobmaster/python-mattermost-driver
-revChatGPT>=6.8.6

@@ -1,6 +1,6 @@
 ## Introduction
 
-This is a simple Mattermost Bot that uses OpenAI's GPT API to generate responses to user inputs. The bot responds to these commands: `!gpt`, `!chat` and `!talk` and `!goon` and `!new` and  `!help` depending on the first word of the prompt.
+This is a simple Mattermost Bot that uses OpenAI's GPT API(or self-host models) to generate responses to user inputs. The bot responds to these commands: `!gpt`, `!chat` and `!new` and  `!help` depending on the first word of the prompt.
 
 ## Feature
 
@@ -26,7 +26,7 @@ docker compose up -d
 The following commands need pandora http api: https://github.com/pengzhile/pandora/blob/master/doc/wiki_en.md#http-restful-api
 - `!talk + [prompt]` chat using chatGPT web with context conversation
 - `!goon` ask chatGPT to complete the missing part from previous conversation
-- `!new` start a new converstaion 
+- `!new` start a new converstaion
 
 ## Demo
 Remove support for Bing AI, Google Bard due to technical problems.
