@@ -4,8 +4,8 @@ This is a simple Mattermost Bot that uses OpenAI's GPT API(or self-host models) 
 
 ## Feature
 
-1. Support Openai ChatGPT
-3. ChatGPT web ([pandora](https://github.com/pengzhile/pandora))
+1. Support official openai api and self host models([LocalAI](https://localai.io/model-compatibility/))
+2. Image Generation with [DALL·E](https://platform.openai.com/docs/api-reference/images/create) or [LocalAI](https://localai.io/features/image-generation/) or [stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API)
 ## Installation and Setup
 
 See https://github.com/hibobmaster/mattermost_bot/wiki
@@ -21,18 +21,14 @@ docker compose up -d
 - `!help` help message
 - `!gpt + [prompt]` generate a one time response from chatGPT
 - `!chat + [prompt]` chat using official chatGPT api with context conversation
-- `!pic + [prompt]` generate an image from Bing Image Creator
+- `!pic + [prompt]` Image generation with DALL·E or LocalAI or stable-diffusion-webui
 
-The following commands need pandora http api: https://github.com/pengzhile/pandora/blob/master/doc/wiki_en.md#http-restful-api
-- `!talk + [prompt]` chat using chatGPT web with context conversation
-- `!goon` ask chatGPT to complete the missing part from previous conversation
 - `!new` start a new converstaion
 
 ## Demo
 Remove support for Bing AI, Google Bard due to technical problems.
-![demo1](https://i.imgur.com/XRAQB4B.jpg)
-![demo2](https://i.imgur.com/if72kyH.jpg)
-![demo3](https://i.imgur.com/GHczfkv.jpg)
+![gpt command](https://imgur.com/vdT83Ln.jpg)
+![image generation](https://i.imgur.com/GHczfkv.jpg)
 
 ## Thanks
 <a href="https://jb.gg/OpenSourceSupport" target="_blank">
