@@ -24,3 +24,6 @@ src/__pycache__
 settings.js
 mattermost-server
 tests
+full-config.json.example
+config.json.example
+.full-env.example
