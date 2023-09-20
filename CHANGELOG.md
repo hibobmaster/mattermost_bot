@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.0
+- support sending typing state
+
 ## v1.1.0
 - remove pandora
 - refactor chat and image genderation backend
