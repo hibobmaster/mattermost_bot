@@ -80,6 +80,8 @@ class Bot:
         self.image_generation_backend: str = image_generation_backend
         self.timeout = timeout or 120.0
 
+        self.bot_id = None
+
         self.base_path = Path(os.path.dirname(__file__)).parent
 
         if not os.path.exists(self.base_path / "images"):
@@ -134,6 +136,9 @@ class Bot:
 
     async def login(self) -> None:
         await self.driver.login()
+        # get user id
+        resp = await self.driver.users.get_user(user_id="me")
+        self.bot_id = resp["id"]
 
     async def run(self) -> None:
         await self.driver.init_websocket(self.websocket_handler)
@@ -187,6 +192,13 @@ class Bot:
                 if self.gpt_prog.match(message):
                     prompt = self.gpt_prog.match(message).group(1)
                     try:
+                        # sending typing state
+                        await self.driver.users.publish_user_typing(
+                            self.bot_id,
+                            options={
+                                "channel_id": channel_id,
+                            },
+                        )
                         response = await self.chatbot.oneTimeAsk(prompt)
                         await self.send_message(channel_id, f"{response}", root_id)
                     except Exception as e:
@@ -197,6 +209,13 @@ class Bot:
                 elif self.chat_prog.match(message):
                     prompt = self.chat_prog.match(message).group(1)
                     try:
+                        # sending typing state
+                        await self.driver.users.publish_user_typing(
+                            self.bot_id,
+                            options={
+                                "channel_id": channel_id,
+                            },
+                        )
                         response = await self.chatbot.ask_async(
                             prompt=prompt, convo_id=user_id
                         )
@@ -225,7 +244,13 @@ class Bot:
                     prompt = self.pic_prog.match(message).group(1)
                     # generate image
                     try:
-                        # generate image
+                        # sending typing state
+                        await self.driver.users.publish_user_typing(
+                            self.bot_id,
+                            options={
+                                "channel_id": channel_id,
+                            },
+                        )
                         b64_datas = await imagegen.get_images(
                             self.httpx_client,
                             self.image_generation_endpoint,
