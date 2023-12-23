@@ -3,7 +3,7 @@
     "email": "bot@hibobmaster.com",
     "username": "@bot",
     "password": "SfBKY%K7*e&a%ZX$3g@Am&jQ",
-    "port": "8065",
+    "port": 8065,
     "scheme": "http",
     "openai_api_key": "xxxxxxxxxxxxxxxxxxxxxxxx",
     "gpt_api_endpoint": "https://api.openai.com/v1/chat/completions",
@@ -18,6 +18,6 @@
     "image_generation_endpoint": "http://localai:8080/v1/images/generations",
     "image_generation_backend": "localai",
     "image_generation_size": "512x512",
-    "image_format": "webp",
+    "image_format": "jpeg",
     "timeout": 120.0
 }

@@ -1,4 +1,7 @@
 # Changelog
+## v1.3.0
+- Fix localai v2.0+ image generation
+- Support specific output image format(jpeg, png) and size
 
 ## v1.2.0
 - support sending typing state
