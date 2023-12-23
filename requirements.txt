@@ -2,4 +2,5 @@ httpx
 Pillow
 tiktoken
 tenacity
+aiofiles
 mattermostdriver @ git+https://github.com/hibobmaster/python-mattermost-driver

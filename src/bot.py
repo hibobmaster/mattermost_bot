@@ -1,3 +1,5 @@
+import sys
+import aiofiles.os
 from mattermostdriver import AsyncDriver
 from typing import Optional
 import json
@@ -34,6 +36,8 @@ class Bot:
         temperature: Optional[float] = None,
         image_generation_endpoint: Optional[str] = None,
         image_generation_backend: Optional[str] = None,
+        image_generation_size: Optional[str] = None,
+        image_format: Optional[str] = None,
         timeout: Optional[float] = 120.0,
     ) -> None:
         if server_url is None:
@@ -53,6 +57,19 @@ class Bot:
             if scheme.strip().lower() not in ["http", "https"]:
                 raise ValueError("scheme must be either http or https")
             self.scheme = scheme
+
+        if image_generation_endpoint and image_generation_backend not in [
+            "openai",
+            "sdwui",
+            "localai",
+            None,
+        ]:
+            logger.error("image_generation_backend must be openai or sdwui or localai")
+            sys.exit(1)
+
+        if image_format not in ["jpeg", "png", None]:
+            logger.error("image_format should be jpeg or png, leave blank for jpeg")
+            sys.exit(1)
 
         # @chatgpt
         if username is None:
@@ -78,6 +95,21 @@ class Bot:
         )
         self.image_generation_endpoint: str = image_generation_endpoint
         self.image_generation_backend: str = image_generation_backend
+
+        if image_format:
+            self.image_format: str = image_format
+        else:
+            self.image_format = "jpeg"
+
+        if image_generation_size is None:
+            self.image_generation_size = "512x512"
+            self.image_generation_width = 512
+            self.image_generation_height = 512
+        else:
+            self.image_generation_size = image_generation_size
+            self.image_generation_width = self.image_generation_size.split("x")[0]
+            self.image_generation_height = self.image_generation_size.split("x")[1]
+
         self.timeout = timeout or 120.0
 
         self.bot_id = None
@@ -251,20 +283,19 @@ class Bot:
                                 "channel_id": channel_id,
                             },
                         )
-                        b64_datas = await imagegen.get_images(
+                        image_path_list = await imagegen.get_images(
                             self.httpx_client,
                             self.image_generation_endpoint,
                             prompt,
                             self.image_generation_backend,
                             timeount=self.timeout,
                             api_key=self.openai_api_key,
+                            output_path=self.base_path / "images",
                             n=1,
-                            size="256x256",
-                        )
-                        image_path_list = await asyncio.to_thread(
-                            imagegen.save_images,
-                            b64_datas,
-                            self.base_path / "images",
+                            size=self.image_generation_size,
+                            width=self.image_generation_width,
+                            height=self.image_generation_height,
+                            image_format=self.image_format,
                         )
                         # send image
                         for image_path in image_path_list:
@@ -274,6 +305,7 @@ class Bot:
                                 image_path,
                                 root_id,
                             )
+                            await aiofiles.os.remove(image_path)
                     except Exception as e:
                         logger.error(e, exc_info=True)
                         raise Exception(e)
@@ -321,8 +353,7 @@ class Bot:
                     "root_id": root_id,
                 }
             )
-            # remove image after posting
-            os.remove(filepath)
+
         except Exception as e:
             logger.error(e, exc_info=True)
             raise Exception(e)
