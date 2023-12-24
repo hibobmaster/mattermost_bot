@@ -28,7 +28,7 @@ docker compose up -d
 ## Demo
 Remove support for Bing AI, Google Bard due to technical problems.
 ![gpt command](https://imgur.com/vdT83Ln.jpg)
-![image generation](https://i.imgur.com/GHczfkv.jpg)
+![image generation](https://i.imgur.com/DQ3i3wW.jpg)
 
 ## Thanks
 <a href="https://jb.gg/OpenSourceSupport" target="_blank">
