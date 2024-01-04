@@ -1,4 +1,8 @@
 # Changelog
+
+## v1.3.1
+- Expose more stable diffusion webui api parameters
+
 ## v1.3.0
 - Fix localai v2.0+ image generation
 - Support specific output image format(jpeg, png) and size
