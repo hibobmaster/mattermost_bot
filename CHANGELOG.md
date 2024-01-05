@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.2
+- Make gptbot more compatible
+
 ## v1.3.1
 - Expose more stable diffusion webui api parameters
 

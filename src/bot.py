@@ -255,7 +255,7 @@ class Bot:
                                 "channel_id": channel_id,
                             },
                         )
-                        response = await self.chatbot.ask_async(
+                        response = await self.chatbot.ask_async_v2(
                             prompt=prompt, convo_id=user_id
                         )
                         await self.send_message(channel_id, f"{response}", root_id)
